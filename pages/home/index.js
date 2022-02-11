@@ -1,18 +1,20 @@
 import AppContainer from '../index'
 import { Card } from '../../components/Card'
-import Product from '../../models/Product'
-import connectionDB from '../../lib/connection'
+// import Product from '../../models/Product'
+// import connectionDB from '../../lib/connection'
+import commerce from '../../lib/commerce'
 
-const Home = ({ products, category }) => {
+const Home = ({ products, merchantData }) => {
+
 	const renderCard = () => {
 		return products.map((product) => (
 			<Card
-				key={product._id}
+				key={product.id}
 				cardSize={'large'}
 				title={product.name}
-				image={product.imageUrl}
-				price={product.price}
-				stock={product.stock}
+				image={product.image.url}
+				price={product.price.formatted}
+				stock={product.inventory.available}
 			/>
 		))
 	}
@@ -20,7 +22,7 @@ const Home = ({ products, category }) => {
 	return (
 		<AppContainer>
 			<div className="container mx-auto my-10">
-				<h2 className={'ml-5 my-10 text-3xl font-bold font-Poppins'}>
+				<h2 className={'font-Poppins my-10 ml-5 text-3xl font-bold'}>
 					{/* {category} */}
 					category
 				</h2>
@@ -32,16 +34,9 @@ const Home = ({ products, category }) => {
 }
 
 export async function getStaticProps() {
-	await connectionDB()
-	const productData = await Product.find({})
-
-	const products = productData.map((item) => {
-		const product = item.toObject()
-		product._id = `${product._id}`
-		return product
-	})
-
-	return { props: { products } }
+	const merchantData = await commerce.merchants.about()
+	const products = await commerce.products.list().then(res => res.data)
+	return { props: { products, merchantData } }
 }
 
 export default Home

@@ -1,6 +1,11 @@
+// SIDENAV
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
+import {
+	getCategories,
+	getSubCategories,
+} from '../services/menu/menuCategories'
 
 const SideNav = () => {
 	// Theese states are important for navbar works right
@@ -12,24 +17,21 @@ const SideNav = () => {
 
 	// Fetching subcategories from api
 	useEffect(() => {
-		axios
-			.get(`http://localhost:3000/api/menu/${category}`)
-			.then((res) => {
-				const categories = res.data
-				setSubCategoriesList(categories)
+		getSubCategories({category})
+			.then((data) => {
+				setSubCategoriesList(data)
 			})
-			.catch((err) => console.log(err))
+			.catch((error) => {
+				console.log(error)
+			})
 	}, [category])
 
 	// fetching main categories from api
 	useEffect(() => {
-		axios
-			.get('http://localhost:3000/api/menu/categories')
-			.then((res) => {
-				const mainCategories = res.data
-				setData(mainCategories)
-			})
-			.catch((err) => console.log(err))
+		getCategories().then((data) => {
+			console.log(data)
+			setCategory(data)
+		})
 	}, [])
 
 	const toggleCategories = () => {
@@ -72,7 +74,11 @@ const SideNav = () => {
 
 	const showSubcategories = () => {
 		return subCategoriesList.map((item) => (
-			<Link key={item.name} href={`home/${item.name}`}>
+			<Link
+				key={item.name}
+				href={`/home/[category]`}
+				as={`/home/${item.name}`}
+			>
 				<a
 					key={item.name}
 					className={
@@ -118,7 +124,9 @@ const SideNav = () => {
 
 				<div
 					className={
-						isShown ? 'w-36 mx-0 p-2 flex flex-col justify-center items-center' : 'hidden'
+						isShown
+							? 'w-36 mx-0 p-2 flex flex-col justify-center items-center'
+							: 'hidden'
 					}
 				>
 					{showCategories()}
