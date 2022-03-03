@@ -1,141 +1,30 @@
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import axios from 'axios'
+import commerce from '../lib/commerce'
+import {useState, useEffect} from 'react'
+import LinkButton from "./LinkButton";
 
 const SideNav = () => {
-	// Theese states are important for navbar works right
-	const [data, setData] = useState([{}])
-	const [category, setCategory] = useState('')
-	const [isShown, setIsShown] = useState(false)
-	const [subCategoriesShown, setSubCategoriesShown] = useState(false)
-	const [subCategoriesList, setSubCategoriesList] = useState([{}])
+    const [categoriesList, setCategories] = useState([{}])
 
-	// Fetching subcategories from api
-	useEffect(() => {
-		axios
-			.get(`http://localhost:3000/api/menu/${category}`)
-			.then((res) => {
-				const categories = res.data
-				setSubCategoriesList(categories)
-			})
-			.catch((err) => console.log(err))
-	}, [category])
+    useEffect(() => {
+        commerce.categories
+            .list()
+            .then((res) => {
+                setCategories(res.data)
+            })
+            .catch((err) => console.log(err))
+    }, [])
 
-	// fetching main categories from api
-	useEffect(() => {
-		axios
-			.get('http://localhost:3000/api/menu/categories')
-			.then((res) => {
-				const mainCategories = res.data
-				setData(mainCategories)
-			})
-			.catch((err) => console.log(err))
-	}, [])
+    // This constant stores every main category
+    const mappingCategories = categoriesList.map((category) => {
+        return <p key={category.id}>{category.name}</p>
+    })
 
-	const toggleCategories = () => {
-		setIsShown(!isShown)
-	}
-
-	const toggleSubCategories = (category) => {
-		if (category === 'ropa') {
-			setCategory(String(category))
-			setSubCategoriesShown(!subCategoriesShown)
-		}
-
-		if (category === 'accesorios') {
-			setCategory(String(category))
-			setSubCategoriesShown(!subCategoriesShown)
-		}
-
-		if (category === 'zapatos') {
-			setCategory(String(category))
-			setSubCategoriesShown(!subCategoriesShown)
-		}
-	}
-
-	const showCategories = () => {
-		return data.map((item) => {
-			return (
-				<a
-					key={item.name}
-					href={`#`}
-					className={
-						'mt-3.5 py-2 px-5 hover:bg-black hover:text-white hover:rounded'
-					}
-					onClick={() => toggleSubCategories(item.name)}
-				>
-					{item.name}
-				</a>
-			)
-		})
-	}
-
-	const showSubcategories = () => {
-		return subCategoriesList.map((item) => (
-			<Link key={item.name} href={`home/${item.name}`}>
-				<a
-					key={item.name}
-					className={
-						'w-min py-2 px-5 mt-1 hover:bg-black hover:text-white rounded'
-					}
-				>
-					{item.name}
-				</a>
-			</Link>
-		))
-	}
-
-	return (
-		<>
-			<div
-				className={
-					'w-52 h-full mt-12 flex flex-col justify-evenly items-center'
-				}
-			>
-				<div>
-					<Link href={'/home'}>
-						<a
-							href="#"
-							className={
-								'py-3 px-5 my-1 rounded hover:bg-black hover:text-white'
-							}
-							onClick={() => toggleCategories()}
-						>
-							Mujeres
-						</a>
-					</Link>
-
-					<Link href={'/home/men'}>
-						<a
-							className={
-								'py-3 px-5 my-1 rounded hover:bg-black hover:text-white'
-							}
-						>
-							Hombre
-						</a>
-					</Link>
-				</div>
-
-				<div
-					className={
-						isShown ? 'w-36 mx-0 p-2 flex flex-col justify-center items-center' : 'hidden'
-					}
-				>
-					{showCategories()}
-				</div>
-
-				<div
-					className={
-						subCategoriesShown
-							? 'w-min ml-5 p-2 bg-white flex flex-col rounded'
-							: 'hidden'
-					}
-				>
-					{showSubcategories()}
-				</div>
-			</div>
-		</>
-	)
+    return <>{
+        <div>
+            <LinkButton label={'Mujeres'}/>
+            <LinkButton label={'Hombres'}/>
+        </div>}
+    </>
 }
 
 export default SideNav

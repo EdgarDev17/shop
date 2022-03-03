@@ -9,7 +9,7 @@ const variants = {
 }
 
 const ButtonSolid = (props) => {
-	const [variant, setVariant] = useState(props.variant)
+	const [variant] = useState(props.variant)
 
 	return (
 		<div>
