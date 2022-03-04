@@ -1,38 +1,38 @@
 import Head from 'next/head'
-import { Footer } from '../components/Footer'
-import { Nav } from '../components/Nav'
+import {Footer} from '../components/Footer'
+import {Nav} from '../components/Nav'
 import SideNav from '../components/SideNav'
 import commerce from '../lib/commerce'
 
-export default function Layout({ children }) {
-	return (
-		<div className={''}>
-			<Head>
-				<title>EdDev Ecommerce</title>
-				<meta
-					name="description"
-					content="Ecommerce for a clothing store"
-				/>
-				<link rel="icon" href={'/favicon.ico'} />
-			</Head>
+// Layout: Holy Grail Layout
 
-			{/*<div className="fixed flex flex-col">*/}
-			{/*	<div className="my-5">*/}
-			{/*		<Nav />*/}
-			{/*	</div>*/}
-			{/*</div>*/}
+export default function Layout({children}) {
+    return (
+        <div>
+            <Head>
+                <title>EdDev Ecommerce</title>
+                <meta
+                    name="description"
+                    content="Ecommerce for a clothing store"
+                />
+                <link rel="icon" href={'/favicon.ico'}/>
+            </Head>
 
-			<div className="fixed mt-10 pt-2">
-				<SideNav  />
-			</div>
+            <div className={'w-full flex flex-row flex-grow'}>
 
-			<div className={'container mx-auto pt-12'}>
-				<div>{children}</div>
-			</div>
+                <div className={'w-min flex-shrink flex-grow-0 px-2'}>
+                    <SideNav/>
+                </div>
 
-			<footer className={''}>
-				<Footer />
-			</footer>
-		</div>
-	)
+                <main role={'main'} className={'w-full flex-grow mx-auto'}>
+                    <div>{children}</div>
+                </main>
+
+            </div>
+
+            <footer className={''}>
+                <Footer/>
+            </footer>
+        </div>
+    )
 }
