@@ -26,7 +26,7 @@ const Card = (props) => {
 			<p
 				className={'text-md my-5 ml-5 text-gray-700'}
 			>{`Quedan ${props.stock} en stock`}</p>
-			<p className={'text-md my-5 ml-5 text-gray-700'}>${props.price}</p>
+			<p className={'text-md my-5 ml-5 text-gray-700'}>{props.price}</p>
 			
 			<div
 				className={'mt-5 flex flex-row flex-nowrap justify-evenly pt-1'}

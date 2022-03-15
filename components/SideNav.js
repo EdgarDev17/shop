@@ -15,7 +15,7 @@ const SideNav = () => {
 
     const handleSubCategories = () => {
         return categoriesList.map(category => <div key={category.id}><Link
-            href={`home/${category.name}`}><a>{category.name}</a></Link></div>)
+            href={`/home/${category.name.toLowerCase()}`}><a>{category.name}</a></Link></div>)
     }
 
     const onMouseHandler = (e) => {
