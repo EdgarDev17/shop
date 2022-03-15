@@ -1,40 +1,75 @@
-import {useState, useEffect} from 'react'
-import LinkButton from "./LinkButton";
-import {getCategoriesList} from "../services/SideNavService";
+import { useState, useEffect } from 'react'
+import LinkButton from './LinkButton'
+import {
+	getCategoriesList,
+	getCategoriesByParent,
+} from '../services/SideNavService'
 import Link from 'next/link'
 
-//TODO: Hacer que el boton despliegue las diferentes opciones al hacer hover sobre el boton
 const SideNav = () => {
-    const [categoriesList, setCategoriesList] = useState([{}])
-    const [toggleSubCategories, setToggleSubCategories] = useState(false)
+	const [categoriesList, setCategoriesList] = useState([{}])
+	const [subCategoriesList, setSubCategoriesList] = useState([{}])
 
-    useEffect(() => {
-        getCategoriesList()
-            .then((res) => setCategoriesList(res))
-    }, [])
+	const [toggleSubCategories, setToggleSubCategories] = useState(false)
+	const [toggleExtraCategories, setToggleExtraCategories] = useState(true)
 
-    const handleSubCategories = () => {
-        return categoriesList.map(category => <div key={category.id}><Link
-            href={`/home/${category.name.toLowerCase()}`}><a>{category.name}</a></Link></div>)
-    }
+	useEffect(() => {
+		getCategoriesList().then((categoriesArray) => {
+			setCategoriesList(categoriesArray)
+			return categoriesArray
+		})
+	}, [])
 
-    const onMouseHandler = (e) => {
-        console.log('Mouse on hover')
-        setToggleSubCategories(!toggleSubCategories)
-    }
+	const getCategoryByParent = (parent) => {
+		getCategoriesByParent(parent)
+	}
 
-    // This constant stores every main category
-    return <>
-        <div className={'w-full h-full flex flex-col px-2'}>
-            <div className={'w-auto h-auto flex px-2'}>
-                <LinkButton pageLink={'/home'} label={'Mujeres'} onMouseHandler={onMouseHandler}/>
-                <LinkButton pageLink={'/home/men'} label={'Hombres'}/>
-            </div>
-            <div>
-                {toggleSubCategories ? handleSubCategories() : <div/>}
-            </div>
-        </div>
-    </>
+	const renderCategories = () => {
+		return categoriesList.map((category) => (
+			<div key={category.id} className={'flex flex-row'}>
+				<div className='my-3'>
+					<LinkButton
+						pageLink={`/home/${category.slug}`}
+						label={category.slug}
+					/>
+				</div>
+			</div>
+		))
+	}
+
+	const renderSubCategories = (parent) => {
+		return subCategoriesList.map((category) => (
+			<div key={category.id}>
+				<Link href={`/home/${category.slug}`}>
+					<a>{category.name}</a>
+				</Link>
+			</div>
+		))
+	}
+
+	const onMouseHandlerSubCategories = (e) => {
+		setToggleSubCategories(!toggleSubCategories)
+	}
+
+	return (
+		<>
+			<div className={'flex h-full w-full flex-col px-2'}>
+				<div className={'mt-10 mb-5 flex h-auto w-auto px-2'}>
+					<LinkButton
+						pageLink={'/home'}
+						label={'Mujeres'}
+						onMouseHandler={onMouseHandlerSubCategories}
+					/>
+
+					<LinkButton pageLink={'/home/men'} label={'Hombres'} />
+				</div>
+				<div>{toggleSubCategories ? renderCategories() : <div />}</div>
+				<div>
+					{toggleExtraCategories ? renderSubCategories() : <div />}
+				</div>
+			</div>
+		</>
+	)
 }
 
 export default SideNav
